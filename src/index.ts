@@ -22,7 +22,7 @@ app.use(
 app.use(
   "/static/*",
   serveStatic({
-    root: "./", // Root harus relatif terhadap folder project
+    root: "./",
   })
 );
 

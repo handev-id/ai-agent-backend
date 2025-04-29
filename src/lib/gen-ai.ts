@@ -1,7 +1,7 @@
 import { GoogleGenAI, ContentListUnion } from "@google/genai";
 
 interface ChatBotOptions {
-  content: ContentListUnion;
+  contents: ContentListUnion;
   instruction: string;
   id: string;
   GEN_AI_KEY: string;
@@ -13,24 +13,11 @@ export default async function generativeAi(options: ChatBotOptions) {
 
   const response = await genAi.models.generateContent({
     model,
-    contents: options.content,
+    contents: options.contents,
     config: {
       systemInstruction: options.instruction,
     },
   });
-
-  await genAi.caches
-    .create({
-      model,
-      config: {
-        contents: options.content,
-        displayName: options.id,
-        systemInstruction: options.instruction,
-      },
-    })
-    .catch((err) => {});
-
-  console.log(await genAi.caches.list());
 
   return response.text;
 }

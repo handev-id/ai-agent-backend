@@ -28,10 +28,21 @@ model AiAgent {
   name           String
   user           User                @relation(fields: [userId], references: [id])
   userId         Int
+  histories      History[]
   credentials    AiAgentCredentials? @relation(fields: [credentialsId], references: [id])
   credentialsId  Int?                @unique
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
+}
+
+model History {
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique // GENERATE FROM CLIENT
+  contents  Json     @default("[]")
+  agent     AiAgent  @relation(fields: [agentId], references: [id])
+  agentId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model AiAgentCredentials {

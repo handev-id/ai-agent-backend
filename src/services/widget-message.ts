@@ -1,8 +1,9 @@
-import { Redis } from "ioredis";
-import generativeAi from "../lib/gen-ai";
 import { prisma } from "../lib/prisma";
 import { Content } from "@google/genai";
 import { io } from "..";
+import { Redis } from "ioredis";
+import generativeAi from "../lib/gen-ai";
+import cache from "../lib/redis";
 
 export interface WidgetMessageProps {
   userId: string;
@@ -13,13 +14,15 @@ export interface WidgetMessageProps {
 export default class WidgetMessage {
   public static async receiveMessage(data: WidgetMessageProps) {
     const { clientId, text, userId } = data;
-    const credentials = await prisma.aiAgentCredentials.findUnique({
-      where: {
-        clientId,
-      },
-      include: {
-        aiAgent: true,
-      },
+    const credentials = await cache(`agent:${clientId}`, async () => {
+      return await prisma.aiAgentCredentials.findUnique({
+        where: {
+          clientId,
+        },
+        include: {
+          aiAgent: true,
+        },
+      });
     });
 
     if (!credentials || !credentials.aiAgent) {
@@ -64,7 +67,7 @@ export default class WidgetMessage {
       GEN_AI_KEY: credentials.generativeAiKey,
       id: credentials.aiAgent.name,
       instruction: instruction || "Your assistant is a helpful assistant.",
-      content: parseMessage.concat([
+      contents: parseMessage.concat([
         {
           role: "user",
           parts: [{ text }],

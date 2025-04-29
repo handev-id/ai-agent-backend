@@ -30,6 +30,16 @@ credentialsHandler.post("/", async (c) => {
     data: await c.req.json(),
   });
 
+  const existingGenerativeKey = await prisma.aiAgentCredentials.findFirst({
+    where: {
+      generativeAiKey,
+    },
+  });
+
+  if (existingGenerativeKey) {
+    return c.json({ message: "Generative AI key already exists" }, 400);
+  }
+
   const { apiKey, clientId } = generateCredentials();
 
   const credentials = await prisma.aiAgentCredentials.upsert({
