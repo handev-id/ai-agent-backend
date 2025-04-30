@@ -13,7 +13,9 @@ const app = new Hono();
 app.use(
   cors({
     origin:
-      process.env.NODE_ENV === "production" ? "/" : "http://localhost:5173",
+      process.env.NODE_ENV === "production"
+        ? "/"
+        : `${process.env.FRONTEND_URL}`,
     allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
   })

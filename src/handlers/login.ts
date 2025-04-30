@@ -12,7 +12,9 @@ const clientSecret = process.env.GOOGLE_CLIENT_SECRET!;
 const baseUrl = process.env.BASE_URL!;
 const redirectUri = `${baseUrl}/api/auth/callback`;
 const CLIENT_URL =
-  process.env.NODE_ENV !== "production" ? "http://localhost:5173" : baseUrl;
+  process.env.NODE_ENV !== "production"
+    ? `${process.env.FRONTEND_URL}`
+    : baseUrl;
 
 loginHandler.get("/login", (c) => {
   const params = new URLSearchParams({
