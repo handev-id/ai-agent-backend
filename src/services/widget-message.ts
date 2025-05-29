@@ -1,6 +1,6 @@
 import { prisma } from "../lib/prisma";
 import { Content } from "@google/genai";
-import { io } from "..";
+import { io } from "../socket";
 import { Redis } from "ioredis";
 import generativeAi from "../lib/gen-ai";
 import cache from "../lib/redis";
