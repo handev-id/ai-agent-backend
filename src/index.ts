@@ -8,6 +8,7 @@ import WidgetMessage, { WidgetMessageProps } from "./services/widget-message";
 import loginHandler from "./handlers/login";
 import accountHandler from "./handlers/account";
 import aiAgentHandler from "./handlers/ai-agent";
+import historyHandler from "./handlers/history";
 
 const app = new Hono();
 app.use(
@@ -30,10 +31,10 @@ app.use(
 
 app.route("/api/auth", loginHandler);
 app.route("/api/account", accountHandler);
-app.route("api/ai-agent", aiAgentHandler);
+app.route("/api/ai-agent", aiAgentHandler);
+app.route("/api/histories", historyHandler);
 
 const wsServer = createServer();
-//@ts-ignore
 export const io = new Server(wsServer);
 
 io.use(async (socket, next) => {

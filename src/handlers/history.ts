@@ -1,10 +1,10 @@
 import { Hono } from "hono";
-import { apiMiddleware } from "../middlewares/api-middleware";
 import { prisma } from "../lib/prisma";
+import { Content, ContentListUnion } from "@google/genai";
+import { apiMiddleware } from "../middlewares/api-middleware";
 import vine from "@vinejs/vine";
 import generativeAi from "../lib/gen-ai";
 import redis from "../lib/redis";
-import { Content, ContentListUnion } from "@google/genai";
 
 const historyHandler = new Hono();
 
@@ -89,6 +89,24 @@ historyHandler.post("/", async (c) => {
   });
 
   return c.json(savedHistory);
+});
+
+historyHandler.get("/:id", async (c) => {
+  const userId = await vine.validate({
+    schema: vine.string().uuid(),
+    data: c.req.param("id"),
+  });
+
+  const histories = await prisma.history.findUnique({
+    where: {
+      userId,
+    },
+    include: {
+      agent: true,
+    },
+  });
+
+  return c.json(histories);
 });
 
 export default historyHandler;
